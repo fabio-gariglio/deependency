@@ -1,2 +1,2 @@
 # deependency
-A simple, modular and extensible inversion of control container for NodeJS.
+Deependency is modular and extensible Inversion of Control container for NodeJS.

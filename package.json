@@ -1,0 +1,29 @@
+{
+  "name": "deependency",
+  "version": "0.0.1",
+  "description": "Deependency is modular and extensible Inversion of Control container for NodeJS.",
+  "main": "./lib",
+  "scripts": {
+    "test": "NODE_PATH=./lib node_modules/mocha/bin/mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fabio-gariglio/deependency.git"
+  },
+  "keywords": [
+    "ioc",
+    "inversion",
+    "of",
+    "control",
+    "container",
+    "dependency",
+    "injection",
+    "di"
+  ],
+  "author": "Fabio Gariglio",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/fabio-gariglio/deependency/issues"
+  },
+  "homepage": "https://github.com/fabio-gariglio/deependency#readme"
+}
