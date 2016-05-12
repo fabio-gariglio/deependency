@@ -16,7 +16,7 @@ describe('Container:', () => {
 
     // Assert
     should(serviceDefinition).not.be.undefined();
-    serviceDefinition.name.should.be.equal('ServiceWithoutDependencies');
+    serviceDefinition.names.should.match(['ServiceWithoutDependencies']);
     serviceDefinition.dependencies.should.have.length(0);
 
   });
@@ -34,7 +34,7 @@ describe('Container:', () => {
 
     // Assert
     should(serviceDefinition).not.be.undefined();
-    serviceDefinition.name.should.be.equal('ServiceWithOneDependency');
+    serviceDefinition.names.should.match(['ServiceWithOneDependency']);
     serviceDefinition.dependencies.should.have.length(1);
     serviceDefinition.dependencies.should.matchAny('aDependency');
 
@@ -53,7 +53,7 @@ describe('Container:', () => {
 
     // Assert
     should(serviceDefinition).not.be.undefined();
-    serviceDefinition.name.should.be.equal('ServiceWithMultipleDependencies');
+    serviceDefinition.names.should.match(['ServiceWithMultipleDependencies']);
     serviceDefinition.dependencies.should.have.length(3);
     serviceDefinition.dependencies.should.matchAny('dependencyOne');
     serviceDefinition.dependencies.should.matchAny('dependencyTwo');
@@ -77,7 +77,7 @@ describe('Container:', () => {
 
     // Assert
     should(serviceDefinition).not.be.undefined();
-    serviceDefinition.name.should.be.equal('ServiceWithMultipleMultilineDependencies');
+    serviceDefinition.names.should.match(['ServiceWithMultipleMultilineDependencies']);
     serviceDefinition.dependencies.should.have.length(3);
     serviceDefinition.dependencies.should.matchAny('dependencyOne');
     serviceDefinition.dependencies.should.matchAny('dependencyTwo');
@@ -231,6 +231,67 @@ describe('Container:', () => {
 
     should(result).not.be.undefined();
     result.toString().should.be.equal(5);
+
+  });
+
+  it('should be possible to register a service with different names', () => {
+
+    // Arrange
+    function WebClientFactoryService() {
+      this.toString = function () { return 'WebClientFactoryService'; };
+    }
+
+    // Act
+    var target = new Target();
+    var serviceDefinition = target.register({
+      module: WebClientFactoryService,
+      names: [
+        'WebClientFactoryService',
+        'WebClientFactory',
+        'Factory',
+      ],
+    });
+
+    // Assert
+    should(serviceDefinition).not.be.undefined();
+    serviceDefinition.names.should.match([
+      'WebClientFactoryService',
+      'WebClientFactory',
+      'Factory',
+    ]);
+
+  });
+
+  it('should be possible to resolve the same service when this has different names', () => {
+
+    // Arrange
+    function WebClientFactoryService() {
+      this.toString = function () { return 'WebClientFactoryService'; };
+    }
+
+    // Act
+    var target = new Target();
+    target.register({
+      module: WebClientFactoryService,
+      names: [
+        'WebClientFactoryService',
+        'WebClientFactory',
+        'Factory',
+      ],
+    });
+
+    var factory = target.resolve('Factory');
+    var webClientFactory = target.resolve('WebClientFactory');
+    var webClientFactoryService = target.resolve('WebClientFactoryService');
+
+    // Assert
+    should(factory).not.be.undefined();
+    should(webClientFactory).not.be.undefined();
+    should(webClientFactoryService).not.be.undefined();
+
+    factory.should.be.equal(webClientFactory);
+    webClientFactory.should.be.equal(webClientFactoryService);
+    webClientFactoryService.should.be.equal(factory);
 
   });
 
