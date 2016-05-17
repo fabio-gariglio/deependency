@@ -1,3 +1,5 @@
+'use strict';
+
 var should = require('should');
 var Target = require('../lib/Container');
 
@@ -90,7 +92,7 @@ describe('Container:', () => {
     // Arrange
     function MyService() {
       this.toString = () => 'I am MyService!';
-    };
+    }
 
     // Act
     var target = new Target();
@@ -107,9 +109,9 @@ describe('Container:', () => {
   it('should be possible to resolve a service with its previously registered dependencies', () => {
 
     // Arrange
-    function DependencyOne() { this.toString = () => 'I am DependencyOne!'; };
+    function DependencyOne() { this.toString = () => 'I am DependencyOne!'; }
 
-    function DependencyTwo() { this.toString = () => 'I am DependencyTwo!'; };
+    function DependencyTwo() { this.toString = () => 'I am DependencyTwo!'; }
 
     function MyService(dependencyOne, dependencyTwo) {
 
@@ -234,6 +236,23 @@ describe('Container:', () => {
 
   });
 
+  it('should be possible to register a service with a different name', () => {
+
+    // Arrange
+    function MyService() {
+      this.toString = function () { return 'MyService'; };
+    }
+
+    // Act
+    var target = new Target();
+    var serviceDefinition = target.register({ module: MyService, name: 'custom-name' });
+
+    // Assert
+    should(serviceDefinition).not.be.undefined();
+    serviceDefinition.names.should.match(['custom-name']);
+
+  });
+
   it('should be possible to register a service with different names', () => {
 
     // Arrange
@@ -292,6 +311,46 @@ describe('Container:', () => {
     factory.should.be.equal(webClientFactory);
     webClientFactory.should.be.equal(webClientFactoryService);
     webClientFactoryService.should.be.equal(factory);
+
+  });
+
+  it('should be possible to resolve the last registered service when multiple services have the same name', () => {
+
+    // Arrange
+    function MyServiceOne() { this.toString = () => 'MyServiceOne'; }
+
+    function MyServiceTwo() { this.toString = () => 'MyServiceTwo'; }
+
+    // Act
+    var target = new Target();
+    target.register({ module: MyServiceOne, name: 'service' });
+    target.register({ module: MyServiceTwo, name: 'service' });
+
+    var result = target.resolve('service');
+
+    // Assert
+    should(result).not.be.undefined();
+    result.toString().should.be.equal('MyServiceTwo');
+
+  });
+
+  it('should be possible to resolve all services with the same name', () => {
+
+    // Arrange
+    function MyServiceOne() { this.toString = () => 'MyServiceOne'; }
+
+    function MyServiceTwo() { this.toString = () => 'MyServiceTwo'; }
+
+    // Act
+    var target = new Target();
+    target.register({ module: MyServiceOne, name: 'service' });
+    target.register({ module: MyServiceTwo, name: 'service' });
+
+    var result = target.resolveAll('service');
+
+    // Assert
+    should(result).be.Array();
+    should(result).have.length(2);
 
   });
 

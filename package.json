@@ -30,6 +30,19 @@
     "should": "^8.3.1"
   },
   "jshintConfig": {
-    "esversion": 6
-  }  
+    "esversion": 6,
+    "globals": {
+      "Buffer": true,
+      "console": true,
+      "__dirname": true,
+      "require": true,
+      "module": true,
+      "describe": true,
+      "before": true,
+      "after": true,
+      "it": true
+    },
+    "undef": true,
+    "strict": "global"
+  } 
 }
