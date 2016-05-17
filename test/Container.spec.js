@@ -368,4 +368,60 @@ describe('Container:', () => {
 
   });
 
+  it('it should be possible to get a human understandable error when a dependency is missing', () => {
+
+    // Arrange
+    function SubServiceOne() { }
+
+    function Service(subServiceOne, subServiceTwo) { }
+
+    function FacadeService(service) { }
+
+    // Act
+    var target = new Target();
+    target.register({ module: SubServiceOne });
+    target.register({ module: Service });
+    target.register({ module: FacadeService });
+
+    var action = () => target.resolve('FacadeService');
+
+    // Assert
+    should(action).throw(/Missing dependency "subServiceTwo" required by: FacadeService <\- Service/i);
+
+  });
+
+  it('it should be possible to get an empty array when resolveAll() does not find anything', () => {
+
+    // Act
+    var target = new Target();
+    var result = target.resolveAll('Service');
+
+    // Assert
+    should(result).not.be.undefined();
+    should(result).have.length(0);
+
+  });
+
+  it('it should be possible to get a human understandable error when a dependency of a service collection is missing', () => {
+
+    // Arrange
+    function SubServiceOne(serviceOne) { }
+
+    function SubServiceTwo(serviceTwo) { }
+
+    function ServiceOne() { }
+
+    // Act
+    var target = new Target();
+    target.register({ module: SubServiceOne, name: 'SubService' });
+    target.register({ module: SubServiceTwo, name: 'SubService' });
+    target.register({ module: ServiceOne });
+
+    var action = () => target.resolve('SubService');
+
+    // Assert
+    should(action).throw(/Missing dependency "serviceTwo"/i);
+
+  });
+
 });
