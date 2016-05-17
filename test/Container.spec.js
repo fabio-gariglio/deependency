@@ -87,6 +87,20 @@ describe('Container:', () => {
 
   });
 
+  it('should be possible to register a service from an external file and resolve it', () => {
+
+    // Act
+    var target = new Target();
+    target.register({ module: require('./MyServiceTest') });
+
+    var result = target.resolve('MyServiceTest');
+
+    // Assert
+    should(result).not.be.undefined();
+    result.toString().should.be.equal('MyServiceTest');
+
+  });
+
   it('should be possible to resolve a service which has no dependencies', () => {
 
     // Arrange
