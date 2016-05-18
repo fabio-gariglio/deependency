@@ -1,6 +1,6 @@
 {
   "name": "deependency",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Deependency is modular and extensible Inversion of Control container for NodeJS.",
   "main": "./lib",
   "scripts": {
@@ -32,8 +32,6 @@
   "jshintConfig": {
     "esversion": 6,
     "globals": {
-      "Buffer": true,
-      "console": true,
       "__dirname": true,
       "require": true,
       "module": true,
