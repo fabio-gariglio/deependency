@@ -36,6 +36,7 @@
       "require": true,
       "module": true,
       "describe": true,
+      "context": true,
       "before": true,
       "after": true,
       "it": true
