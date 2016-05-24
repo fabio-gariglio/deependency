@@ -316,6 +316,35 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
       });
 
+      context('and specifying hardcoded dependencies', () => {
+
+        describe('the serviceDefinition', () => {
+
+          it('should contain the expected dependencies', () => {
+
+            // Arrange
+            function ObjectDefinition(dependency, simpleDependency) { }
+
+            var serviceRegistration = {
+              module: ObjectDefinition,
+              dependencies: { SimpleDependency: 'ComplexDependency' },
+            };
+
+            // Act
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+
+            // Assert
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependency');
+            serviceDefinition.dependencies[1].should.be.equal('ComplexDependency');
+
+          });
+
+        });
+
+      });
+
     });
 
     context('by providing a serviceRegistration which exposes a class definition', () => {
