@@ -41,4 +41,44 @@ describe('Deependency:', () => {
 
   });
 
+  it('should be possible to register some services and resolve them', () => {
+
+    /*
+    *
+    * IsoDateProvider <-----+
+    *                       +--- DateInstance
+    * StringDateProvider <--+
+    */
+
+    var container = new Target().container();
+
+    container.register({
+      name: 'DateInstance',
+      instance: new Date(),
+    });
+
+    container.register({
+      names: ['DateProvider', 'StringDateProvider'],
+      module: class StringDateProvider {
+        constructor(dateInstance) {
+          this.dateInstance = dateInstance;
+        }
+
+        toString () {
+          return this.dateInstance.toString();
+        }
+      },
+    });
+
+    container.register({
+      names: ['DateProvider', 'IsoDateProvider'],
+      module: function IsoDateProvider(dateInstance) {
+        this.toString = () => dateInstance.toISOString();
+      },
+    });
+
+    var dateProviders = container.resolveAll('DateProvider');
+
+  });
+
 });

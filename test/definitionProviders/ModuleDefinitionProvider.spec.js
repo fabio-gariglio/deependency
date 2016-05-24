@@ -1,11 +1,11 @@
 'use strict';
 
 var should = require('should');
-var ModuleRegistrationService = require('../../lib/registrationServices/ModuleRegistrationService');
+var ModuleDefinitionProvider = require('../../lib/definitionProviders/ModuleDefinitionProvider');
 
-describe('Describing [ModuleRegistrationService]', () => {
+describe('Describing [ModuleDefinitionProvider]', () => {
 
-  context('calling getRegistration(serviceRegistration)', () => {
+  context('calling getServiceDefinition(serviceRegistration)', () => {
 
     context('by providing a serviceRegistration which exposes an object definition', () => {
 
@@ -19,48 +19,48 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: ObjectDefinition,
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the object constructor name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ObjectDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ObjectDefinition']);
 
           });
 
           it('should be singleton by default', () => {
 
-            should(registration.isSingleton).be.true();
+            should(serviceDefinition.isSingleton).be.true();
 
           });
 
           it('should have a factory method', () => {
 
-            should(registration.factoryMethod).be.Function();
+            should(serviceDefinition.factoryMethod).be.Function();
 
           });
 
           it('should allow to get an instance of the registered object', () => {
 
-            var instance = registration.factoryMethod();
+            var instance = serviceDefinition.factoryMethod();
             should(instance).be.instanceOf(ObjectDefinition);
             instance.toString().should.be.equal('ObjectDefinition');
 
@@ -68,8 +68,8 @@ describe('Describing [ModuleRegistrationService]', () => {
 
           it('should always return a new instance', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             should(secondTime).not.be.equal(firstTime);
 
           });
@@ -84,37 +84,37 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: require('./samples/ExternalObjectDefinition'),
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the object constructor name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ExternalObjectDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ExternalObjectDefinition']);
 
           });
 
           it('should allow to get a new instance of the registered object', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             firstTime.toString().should.be.equal('ExternalObjectDefinition');
             should(secondTime).not.be.equal(firstTime);
 
@@ -126,7 +126,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined without any dependency', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should have an empty dependency list', () => {
 
@@ -138,11 +138,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(0);
+            serviceDefinition.dependencies.should.have.length(0);
 
           });
 
@@ -152,7 +152,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -165,13 +165,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -181,7 +181,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies in a multiline constructor', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -195,13 +195,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -211,7 +211,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous without specifying any name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should be null', () => {
 
@@ -221,11 +221,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            should(registration).be.null();
+            should(serviceDefinition).be.null();
 
           });
 
@@ -235,7 +235,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous but specifying a custom name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -246,12 +246,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyObjectDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyObjectDefinition');
 
           });
 
@@ -261,7 +261,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying a custom name as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -274,12 +274,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyObjectDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyObjectDefinition');
 
           });
 
@@ -289,7 +289,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying multiple custom names as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain all provided names', () => {
 
@@ -302,13 +302,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(2);
-            registration.names.should.matchAny('MyDefinition');
-            registration.names.should.matchAny('MyObjectDefinition');
+            serviceDefinition.names.should.have.length(2);
+            serviceDefinition.names.should.matchAny('MyDefinition');
+            serviceDefinition.names.should.matchAny('MyObjectDefinition');
 
           });
 
@@ -332,48 +332,48 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: ClassDefinition,
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the class name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ClassDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ClassDefinition']);
 
           });
 
           it('should be singleton by default', () => {
 
-            should(registration.isSingleton).be.true();
+            should(serviceDefinition.isSingleton).be.true();
 
           });
 
           it('should have a factory method', () => {
 
-            should(registration.factoryMethod).be.Function();
+            should(serviceDefinition.factoryMethod).be.Function();
 
           });
 
           it('should allow to get an instance of the registered class', () => {
 
-            var instance = registration.factoryMethod();
+            var instance = serviceDefinition.factoryMethod();
             should(instance).be.instanceOf(ClassDefinition);
             instance.toString().should.be.equal('ClassDefinition');
 
@@ -381,8 +381,8 @@ describe('Describing [ModuleRegistrationService]', () => {
 
           it('should always return a new class instance', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             should(secondTime).not.be.equal(firstTime);
 
           });
@@ -397,37 +397,37 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: require('./samples/ExternalClassDefinition'),
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the object constructor name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ExternalClassDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ExternalClassDefinition']);
 
           });
 
           it('should allow to get a new instance of the registered object', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             firstTime.toString().should.be.equal('ExternalClassDefinition');
             should(secondTime).not.be.equal(firstTime);
 
@@ -439,7 +439,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined without any dependency', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should have an empty dependency list', () => {
 
@@ -453,11 +453,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(0);
+            serviceDefinition.dependencies.should.have.length(0);
 
           });
 
@@ -467,7 +467,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -481,13 +481,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -497,7 +497,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies in a multiline constructor', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -513,13 +513,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -529,7 +529,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous without specifying any name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should be null', () => {
 
@@ -539,11 +539,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            should(registration).be.null();
+            should(serviceDefinition).be.null();
 
           });
 
@@ -553,7 +553,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous but specifying a custom name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -564,12 +564,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyClassDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyClassDefinition');
 
           });
 
@@ -579,7 +579,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying a custom name as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -592,12 +592,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyClassDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyClassDefinition');
 
           });
 
@@ -607,7 +607,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying multiple custom names as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain all provided names', () => {
 
@@ -620,13 +620,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(2);
-            registration.names.should.matchAny('MyDefinition');
-            registration.names.should.matchAny('MyClassDefinition');
+            serviceDefinition.names.should.have.length(2);
+            serviceDefinition.names.should.matchAny('MyDefinition');
+            serviceDefinition.names.should.matchAny('MyClassDefinition');
 
           });
 
@@ -654,56 +654,56 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: ModuleDefinition,
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the module constructor name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ModuleDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ModuleDefinition']);
 
           });
 
           it('should be singleton by default', () => {
 
-            should(registration.isSingleton).be.true();
+            should(serviceDefinition.isSingleton).be.true();
 
           });
 
           it('should have a factory method', () => {
 
-            should(registration.factoryMethod).be.Function();
+            should(serviceDefinition.factoryMethod).be.Function();
 
           });
 
           it('should allow to get an instance of the registered module', () => {
 
-            var instance = registration.factoryMethod();
+            var instance = serviceDefinition.factoryMethod();
             instance.toString().should.be.equal('ModuleDefinition');
 
           });
 
           it('should always return a new module instance', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             should(secondTime).not.be.equal(firstTime);
 
           });
@@ -718,37 +718,37 @@ describe('Describing [ModuleRegistrationService]', () => {
           module: require('./samples/ExternalModuleDefinition'),
         };
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
-          var registration = null;
+          var serviceDefinition = null;
 
           before(() => {
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
           });
 
           it('should not be null or undefined', () => {
 
-            should(registration).be.not.undefined();
-            should(registration).be.not.null();
+            should(serviceDefinition).be.not.undefined();
+            should(serviceDefinition).be.not.null();
 
           });
 
           it('should be named as the object constructor name', () => {
 
-            should(registration.names).be.Array();
-            registration.names.should.have.length(1);
-            registration.names.should.match(['ExternalModuleDefinition']);
+            should(serviceDefinition.names).be.Array();
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.match(['ExternalModuleDefinition']);
 
           });
 
           it('should allow to get a new instance of the registered object', () => {
 
-            var firstTime = registration.factoryMethod();
-            var secondTime = registration.factoryMethod();
+            var firstTime = serviceDefinition.factoryMethod();
+            var secondTime = serviceDefinition.factoryMethod();
             firstTime.toString().should.be.equal('ExternalModuleDefinition');
             should(secondTime).not.be.equal(firstTime);
 
@@ -760,7 +760,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined without any dependency', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should have an empty dependency list', () => {
 
@@ -774,11 +774,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(0);
+            serviceDefinition.dependencies.should.have.length(0);
 
           });
 
@@ -788,7 +788,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -802,13 +802,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -818,7 +818,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined with multiple dependencies in a multiline constructor', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should list all its dependencies respecting the signature order', () => {
 
@@ -834,13 +834,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.dependencies.should.have.length(2);
-            registration.dependencies[0].should.be.equal('dependencyOne');
-            registration.dependencies[1].should.be.equal('dependencyTwo');
+            serviceDefinition.dependencies.should.have.length(2);
+            serviceDefinition.dependencies[0].should.be.equal('dependencyOne');
+            serviceDefinition.dependencies[1].should.be.equal('dependencyTwo');
 
           });
 
@@ -850,7 +850,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous without specifying any name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should be null', () => {
 
@@ -860,11 +860,11 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            should(registration).be.null();
+            should(serviceDefinition).be.null();
 
           });
 
@@ -874,7 +874,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('defined anonymous but specifying a custom name', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -885,12 +885,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyModuleDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyModuleDefinition');
 
           });
 
@@ -900,7 +900,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying a custom name as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain provided name', () => {
 
@@ -915,12 +915,12 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(1);
-            registration.names.should.matchAny('MyModuleDefinition');
+            serviceDefinition.names.should.have.length(1);
+            serviceDefinition.names.should.matchAny('MyModuleDefinition');
 
           });
 
@@ -930,7 +930,7 @@ describe('Describing [ModuleRegistrationService]', () => {
 
       context('and specifying multiple custom names as well', () => {
 
-        describe('the registration', () => {
+        describe('the serviceDefinition', () => {
 
           it('should contain all provided names', () => {
 
@@ -945,13 +945,13 @@ describe('Describing [ModuleRegistrationService]', () => {
             };
 
             // Act
-            var registrationService = new ModuleRegistrationService();
-            var registration = registrationService.getRegistration(serviceRegistration);
+            var serviceDefinitionService = new ModuleDefinitionProvider();
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
 
             // Assert
-            registration.names.should.have.length(2);
-            registration.names.should.matchAny('MyDefinition');
-            registration.names.should.matchAny('MyModuleDefinition');
+            serviceDefinition.names.should.have.length(2);
+            serviceDefinition.names.should.matchAny('MyDefinition');
+            serviceDefinition.names.should.matchAny('MyModuleDefinition');
 
           });
 
