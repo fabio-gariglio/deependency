@@ -137,8 +137,6 @@ describe('Describing [Container]', () => {
     myServiceDefinition.factoryMethod.onCall(0).returns(Math.random());
     myServiceDefinition.factoryMethod.onCall(1).returns(Math.random());
 
-    var result = null;
-
     it('should be possible to obtain always the same instance', () => {
 
       var serviceDefinitionCatalogMock = {
@@ -306,6 +304,63 @@ describe('Describing [Container]', () => {
 
       serviceOneDefinition.factoryMethod.called.should.be.true();
       serviceTwoDefinition.factoryMethod.called.should.be.true();
+
+    });
+
+  });
+
+  context('resolving a service providing some inline dependencies', () => {
+
+    var serviceDefinition = {
+      names: ['Service'],
+      dependencies: ['registeredDependency', 'inlineDependencyOne'],
+      isSingleton: true,
+      factoryMethod: sinon.stub().returns('service-instance'),
+    };
+
+    var registeredDependencyDefinition = {
+      names: ['RegisteredDependency'],
+      dependencies: ['inlineDependencyOne', 'inlineDependencyTwo'],
+      isSingleton: true,
+      factoryMethod: sinon.stub().returns('registered-dependency-instance'),
+    };
+
+    it('should be possible resolve the service with the provided inline dependencies', () => {
+
+      var serviceDefinitionCatalogMock = {
+        getServiceDefinitionsByName: sinon.stub().returns([]),
+      };
+
+      serviceDefinitionCatalogMock
+        .getServiceDefinitionsByName
+        .withArgs('service')
+        .returns([serviceDefinition]);
+
+      serviceDefinitionCatalogMock
+        .getServiceDefinitionsByName
+        .withArgs('registeredDependency')
+        .returns([registeredDependencyDefinition]);
+
+      var inlineDependencyOne = 'inline-dependency-one-instance';
+      var inlineDependencyTwo = 'inline-dependency-two-instance';
+
+      var container = new Container(null, serviceDefinitionCatalogMock);
+      var result = container.resolve('service', {
+        inlineDependencyOne: inlineDependencyOne,
+        inlineDependencyTwo: inlineDependencyTwo,
+      });
+
+      should(result).be.equal('service-instance');
+
+      registeredDependencyDefinition.factoryMethod.called.should.be.true();
+      registeredDependencyDefinition.factoryMethod.getCall(0).args[0].should.match([
+        inlineDependencyOne, inlineDependencyTwo,
+      ]);
+
+      serviceDefinition.factoryMethod.called.should.be.true();
+      serviceDefinition.factoryMethod.getCall(0).args[0].should.match([
+        'registered-dependency-instance', inlineDependencyOne,
+      ]);
 
     });
 
