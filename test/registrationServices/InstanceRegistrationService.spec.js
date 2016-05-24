@@ -1,7 +1,7 @@
 'use strict';
 
 var should = require('should');
-var InstanceRegistrationService = require('./InstanceRegistrationService');
+var InstanceRegistrationService = require('../../lib/registrationServices/InstanceRegistrationService');
 
 describe('Describing [InstanceRegistrationService]', () => {
 
