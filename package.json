@@ -1,6 +1,6 @@
 {
   "name": "deependency",
-  "version": "0.1.1-alpha",
+  "version": "0.1.2-alpha",
   "description": "Deependency is modular and extensible Inversion of Control container for NodeJS.",
   "main": "./lib",
   "scripts": {

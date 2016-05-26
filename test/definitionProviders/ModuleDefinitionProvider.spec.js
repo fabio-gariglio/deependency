@@ -46,12 +46,6 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
           });
 
-          it('should be singleton by default', () => {
-
-            should(serviceDefinition.isSingleton).be.true();
-
-          });
-
           it('should have a factory method', () => {
 
             should(serviceDefinition.factoryMethod).be.Function();
@@ -139,7 +133,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(0);
@@ -166,7 +162,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -196,7 +194,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -209,11 +209,11 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
       });
 
-      context('defined anonymous without specifying any name', () => {
+      context('defined anonymous', () => {
 
         describe('the serviceDefinition', () => {
 
-          it('should be null', () => {
+          it('should not provide any name', () => {
 
             // Arrange
             var serviceRegistration = {
@@ -222,122 +222,13 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
-            should(serviceDefinition).be.null();
-
-          });
-
-        });
-
-      });
-
-      context('defined anonymous but specifying a custom name', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            var serviceRegistration = {
-              module: function () { },
-              name: 'MyObjectDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyObjectDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying a custom name as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            function ObjectDefinition() { }
-
-            var serviceRegistration = {
-              module: ObjectDefinition,
-              name: 'MyObjectDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyObjectDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying multiple custom names as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain all provided names', () => {
-
-            // Arrange
-            function ObjectDefinition() { }
-
-            var serviceRegistration = {
-              module: ObjectDefinition,
-              names: ['MyDefinition', 'MyObjectDefinition'],
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(2);
-            serviceDefinition.names.should.matchAny('MyDefinition');
-            serviceDefinition.names.should.matchAny('MyObjectDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying hardcoded dependencies', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain the expected dependencies', () => {
-
-            // Arrange
-            function ObjectDefinition(dependency, simpleDependency) { }
-
-            var serviceRegistration = {
-              module: ObjectDefinition,
-              dependencies: { SimpleDependency: 'ComplexDependency' },
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.dependencies.should.have.length(2);
-            serviceDefinition.dependencies[0].should.be.equal('dependency');
-            serviceDefinition.dependencies[1].should.be.equal('ComplexDependency');
+            should(serviceDefinition).not.be.null();
+            serviceDefinition.names.should.have.length(0);
 
           });
 
@@ -385,12 +276,6 @@ describe('Describing [ModuleDefinitionProvider]', () => {
             should(serviceDefinition.names).be.Array();
             serviceDefinition.names.should.have.length(1);
             serviceDefinition.names.should.match(['ClassDefinition']);
-
-          });
-
-          it('should be singleton by default', () => {
-
-            should(serviceDefinition.isSingleton).be.true();
 
           });
 
@@ -483,7 +368,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(0);
@@ -511,7 +398,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -543,7 +432,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -556,11 +447,11 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
       });
 
-      context('defined anonymous without specifying any name', () => {
+      context('defined anonymous', () => {
 
         describe('the serviceDefinition', () => {
 
-          it('should be null', () => {
+          it('should not provide any name', () => {
 
             // Arrange
             var serviceRegistration = {
@@ -569,93 +460,13 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
-            should(serviceDefinition).be.null();
-
-          });
-
-        });
-
-      });
-
-      context('defined anonymous but specifying a custom name', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            var serviceRegistration = {
-              module: class { },
-              name: 'MyClassDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyClassDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying a custom name as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            class ClassDefinition { }
-
-            var serviceRegistration = {
-              module: ClassDefinition,
-              name: 'MyClassDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyClassDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying multiple custom names as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain all provided names', () => {
-
-            // Arrange
-            class ClassDefinition { }
-
-            var serviceRegistration = {
-              module: ClassDefinition,
-              names: ['MyDefinition', 'MyClassDefinition'],
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(2);
-            serviceDefinition.names.should.matchAny('MyDefinition');
-            serviceDefinition.names.should.matchAny('MyClassDefinition');
+            should(serviceDefinition).not.be.null();
+            serviceDefinition.names.should.have.length(0);
 
           });
 
@@ -707,12 +518,6 @@ describe('Describing [ModuleDefinitionProvider]', () => {
             should(serviceDefinition.names).be.Array();
             serviceDefinition.names.should.have.length(1);
             serviceDefinition.names.should.match(['ModuleDefinition']);
-
-          });
-
-          it('should be singleton by default', () => {
-
-            should(serviceDefinition.isSingleton).be.true();
 
           });
 
@@ -804,7 +609,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(0);
@@ -832,7 +639,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -864,7 +673,9 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
             serviceDefinition.dependencies.should.have.length(2);
@@ -877,11 +688,11 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
       });
 
-      context('defined anonymous without specifying any name', () => {
+      context('defined anonymous', () => {
 
         describe('the serviceDefinition', () => {
 
-          it('should be null', () => {
+          it('should not provide any name', () => {
 
             // Arrange
             var serviceRegistration = {
@@ -890,97 +701,13 @@ describe('Describing [ModuleDefinitionProvider]', () => {
 
             // Act
             var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
+            var serviceDefinition = serviceDefinitionService.getServiceDefinition(
+              serviceRegistration
+            );
 
             // Assert
-            should(serviceDefinition).be.null();
-
-          });
-
-        });
-
-      });
-
-      context('defined anonymous but specifying a custom name', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            var serviceRegistration = {
-              module: function () { return { }; },
-              name: 'MyModuleDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyModuleDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying a custom name as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain provided name', () => {
-
-            // Arrange
-            function ModuleDefinition() {
-              return { };
-            }
-
-            var serviceRegistration = {
-              module: ModuleDefinition,
-              name: 'MyModuleDefinition',
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(1);
-            serviceDefinition.names.should.matchAny('MyModuleDefinition');
-
-          });
-
-        });
-
-      });
-
-      context('and specifying multiple custom names as well', () => {
-
-        describe('the serviceDefinition', () => {
-
-          it('should contain all provided names', () => {
-
-            // Arrange
-            function ModuleDefinition() {
-              return { };
-            }
-
-            var serviceRegistration = {
-              module: ModuleDefinition,
-              names: ['MyDefinition', 'MyModuleDefinition'],
-            };
-
-            // Act
-            var serviceDefinitionService = new ModuleDefinitionProvider();
-            var serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-            // Assert
-            serviceDefinition.names.should.have.length(2);
-            serviceDefinition.names.should.matchAny('MyDefinition');
-            serviceDefinition.names.should.matchAny('MyModuleDefinition');
+            should(serviceDefinition).not.be.null();
+            serviceDefinition.names.should.have.length(0);
 
           });
 

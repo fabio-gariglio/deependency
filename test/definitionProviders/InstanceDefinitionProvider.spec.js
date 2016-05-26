@@ -7,13 +7,12 @@ describe('Describing [InstanceDefinitionProvider]', () => {
 
   context('calling getServiceDefinition(serviceRegistration)', () => {
 
-    context('by providing a serviceRegistration which exposes an instance and a name', () => {
+    context('by providing a serviceRegistration which exposes an instance', () => {
 
       var dateInstance = new Date();
 
       var serviceRegistration = {
-        instance: dateInstance,
-        name: 'dateInstance',
+        instance: dateInstance
       };
 
       describe('the serviceDefinition', () => {
@@ -35,17 +34,10 @@ describe('Describing [InstanceDefinitionProvider]', () => {
 
         });
 
-        it('should have the expected name', () => {
+        it('should not provide any name', () => {
 
           should(serviceDefinition.names).be.Array();
-          serviceDefinition.names.should.have.length(1);
-          serviceDefinition.names.should.match(['dateInstance']);
-
-        });
-
-        it('should be singleton', () => {
-
-          should(serviceDefinition.isSingleton).be.true();
+          serviceDefinition.names.should.have.length(0);
 
         });
 
@@ -62,48 +54,6 @@ describe('Describing [InstanceDefinitionProvider]', () => {
 
         });
 
-        it('should always return the same instance', () => {
-
-          var firstTime = serviceDefinition.factoryMethod();
-          var secondTime = serviceDefinition.factoryMethod();
-          should(secondTime).be.equal(firstTime);
-
-        });
-
-      });
-
-    });
-
-    context('by providing a serviceRegistration which exposes multiple names', () => {
-
-      var dateInstance = new Date();
-
-      var serviceRegistration = {
-        instance: dateInstance,
-        names: ['dateInstance', 'instance'],
-      };
-
-      describe('the serviceDefinition', () => {
-
-        var serviceDefinition = null;
-
-        before(() => {
-
-          // Act
-          var serviceDefinitionService = new InstanceDefinitionProvider();
-          serviceDefinition = serviceDefinitionService.getServiceDefinition(serviceRegistration);
-
-        });
-
-        it('should have the expected names', () => {
-
-          should(serviceDefinition.names).be.Array();
-          serviceDefinition.names.should.have.length(2);
-          serviceDefinition.names.should.matchAny('dateInstance');
-          serviceDefinition.names.should.matchAny('instance');
-
-        });
-
       });
 
     });
@@ -115,50 +65,6 @@ describe('Describing [InstanceDefinitionProvider]', () => {
         // Act
         var serviceDefinitionService = new InstanceDefinitionProvider();
         var serviceDefinition = serviceDefinitionService.getServiceDefinition({ });
-
-        // Assert
-        should(serviceDefinition).be.null();
-
-      });
-
-      it('should not be possible to get a serviceDefinition without "name" or "names" property', () => {
-
-        // Act
-        var serviceDefinitionService = new InstanceDefinitionProvider();
-        var serviceDefinition = serviceDefinitionService.getServiceDefinition({ instance: 'value' });
-
-        // Assert
-        should(serviceDefinition).be.null();
-
-      });
-
-      it('should not be possible to get a serviceDefinition with "name" property null', () => {
-
-        // Act
-        var serviceDefinitionService = new InstanceDefinitionProvider();
-        var serviceDefinition = serviceDefinitionService.getServiceDefinition({ instance: 'value', name: null });
-
-        // Assert
-        should(serviceDefinition).be.null();
-
-      });
-
-      it('should not be possible to get a serviceDefinition with "name" property empty', () => {
-
-        // Act
-        var serviceDefinitionService = new InstanceDefinitionProvider();
-        var serviceDefinition = serviceDefinitionService.getServiceDefinition({ instance: 'value', name: '' });
-
-        // Assert
-        should(serviceDefinition).be.null();
-
-      });
-
-      it('should not be possible to get a serviceDefinition with "names" property empty', () => {
-
-        // Act
-        var serviceDefinitionService = new InstanceDefinitionProvider();
-        var serviceDefinition = serviceDefinitionService.getServiceDefinition({ instance: 'value', names: [] });
 
         // Assert
         should(serviceDefinition).be.null();

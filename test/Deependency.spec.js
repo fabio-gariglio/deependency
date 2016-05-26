@@ -3,7 +3,7 @@
 var should = require('should');
 var Target = require('../lib/Deependency');
 
-describe('Deependency:', () => {
+describe('Describing [Deependency]', () => {
 
   it('should be possible to get a container by name', () => {
 

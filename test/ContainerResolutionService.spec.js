@@ -3,9 +3,9 @@
 const should = require('should');
 const sinon  = require('sinon');
 
-var Container = require('../lib/Container');
+var ContainerResolutionService = require('../lib/ContainerResolutionService');
 
-describe('Describing [Container]', () => {
+describe('Describing [ContainerResolutionService]', () => {
 
   context('resolving a service without dependencies', () => {
 
@@ -29,8 +29,8 @@ describe('Describing [Container]', () => {
         .withArgs('MyService')
         .returns([myServiceDefinition]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      result = container.resolve('MyService');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      result = containerResolutionService.resolve('MyService');
 
     });
 
@@ -95,8 +95,8 @@ describe('Describing [Container]', () => {
         .withArgs('DependencyTwo')
         .returns([dependencyTwoRegistration]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      result = container.resolve('MyService');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      result = containerResolutionService.resolve('MyService');
 
     });
 
@@ -148,9 +148,9 @@ describe('Describing [Container]', () => {
         .withArgs('MyService')
         .returns([myServiceDefinition]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      var firstTime = container.resolve('MyService');
-      var secondTime = container.resolve('MyService');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      var firstTime = containerResolutionService.resolve('MyService');
+      var secondTime = containerResolutionService.resolve('MyService');
 
       should(firstTime).not.be.undefined();
       should(secondTime).not.be.undefined();
@@ -187,9 +187,9 @@ describe('Describing [Container]', () => {
         .withArgs('MyService')
         .returns([myServiceDefinition]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      var firstTime = container.resolve('MyService');
-      var secondTime = container.resolve('MyService');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      var firstTime = containerResolutionService.resolve('MyService');
+      var secondTime = containerResolutionService.resolve('MyService');
 
       should(firstTime).not.be.undefined();
       should(secondTime).not.be.undefined();
@@ -233,8 +233,8 @@ describe('Describing [Container]', () => {
           serviceTwoDefinition,
         ]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      result = container.resolve('Service');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      result = containerResolutionService.resolve('Service');
 
     });
 
@@ -286,8 +286,8 @@ describe('Describing [Container]', () => {
           serviceTwoDefinition,
         ]);
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      result = container.resolveAll('Service');
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      result = containerResolutionService.resolveAll('Service');
 
     });
 
@@ -344,8 +344,8 @@ describe('Describing [Container]', () => {
       var inlineDependencyOne = 'inline-dependency-one-instance';
       var inlineDependencyTwo = 'inline-dependency-two-instance';
 
-      var container = new Container(null, serviceDefinitionCatalogMock);
-      var result = container.resolve('service', {
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+      var result = containerResolutionService.resolve('service', {
         inlineDependencyOne: inlineDependencyOne,
         inlineDependencyTwo: inlineDependencyTwo,
       });
