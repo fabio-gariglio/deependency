@@ -81,6 +81,44 @@ var service = container.resolve('IAmAService');
 
 ## Features
 
+#### Service definition by convention
+
+As mentioned before the container is able to detect information about service you are registering as long as the service code follows a specific convention.
+It expects an object contructor, a class or module pattern which has any number of dependencies as arguments:
+
+```js
+module.exports = class ClassDefinition {
+
+  constructor(myDependency) { }
+
+  toString() {
+    return 'ExternalClassDefinition';
+  }
+
+};
+
+module.exports = function ModuleDefinition(myDependency) {
+
+  return {
+    toString: function () {
+      return 'ExternalModuleDefinition';
+    },
+  };
+
+};
+
+module.exports = function ObjectDefinition(myDependency) {
+
+  this.toString = function () {
+    return 'ExternalObjectDefinition';
+  };
+
+};
+```
+
+**NOTE** This is just a default convention. Deependency is designed to allow any service definition. It currently supports `ModuleDefinition` and `InstanceDefinition` but in next release you will be able to define your own convention `;-)`.
+
+
 #### Instance registration
 
 Sometimes your services will depend on primitive values, variables or node modules which do not need to be initialized by the container. For all these scenarios just register them as instance:
