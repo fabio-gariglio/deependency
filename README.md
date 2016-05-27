@@ -1,56 +1,93 @@
 # deependency
 Deependency is modular and extensible Inversion of Control container for NodeJS.
 
-## Installing
+This container does not require any other library it is just few kilobytes of pure javascript code.
 
-`npm install deependency --save`
+Tell the container what are your NodeJS modules and simply use them where you need.
+It only needs to know how to create your module and which other modules it depends on.
+Look at following NodeJS modules:
 
-## Injecting
+```js
+// iAmAService.js
+module.exports = function IAmAService(logger) {
 
-    // DateService.js
+  this.doStuff = function() {
 
-    module.exports = function DateService() {
+    logger.info('I finally have stuff to do!')
 
-      this.get = () => new Date();
+  };
 
-    };
+};
+```
 
-    // ISODateService.js
+The first line of code tells the container everything it needs:
+Your service name is `IAmAService` and it depends on another service called `logger`.
+Also notice previous code does not create any instance of your service because the container will do for you.
+Let it deal with the complexity of create the instance as singleton or transient,
+providing dependencies it needs and dependencies its dependencies need and so on.
 
-    module.exports = function ISODateService(dateService) {
+## Installation
 
-      this.get = () => dateService.get().toISOString();
+```bash
+$ npm install deependency
+```
 
-    };
+## Creating a container
 
-    // index.js
+**Deependency** is a container of Inversion of Control container.
+My nonsense sentence just means Deependency allows you to create as many container as you need but
+most of the time you just want to have one:
 
-    const container = require('Deependency').container();
+```js
+const container = require('Deependency').container();
+```
 
-    // NOTE: Order does not matter during registration ;-)
-    container.register({ module: require('./DateService') });
-    container.register({ module: require('./ISODateService') });
+## Registering services
 
-    var service = container.resolve('ISODateService');
+First of all you should tell the container what are your services that it has to take care of.
+This phase is called **Registration** for which the container exposes `register(registrationRequest, registrationOptions)` function.
 
-    console.log(`Current ISO Date is: ${service.get()}`);
+Let's assume we have following module in our project:
+
+```js
+// iAmAService.js
+module.exports = function IAmAService() {
+
+  // ...
+
+};
+```
+
+Then, in our main file we can create an instance of the container and register our external service:
+
+```js
+const container = require('Deependency').container();
+
+container.register({ module: require('./iAmAService.js') });
+```
+
+First argument is our registration request and is used by the container to detect the service name,
+its dependencies and a way to instantiate it. It creates a definition of the service and stores it for future uses.
+
+## Resolving a service
+
+With previous step the container is now aware of a service called `IAmAService` so now we can ask to
+resolve it. This phase is called **resolution** and container let us obtain an instance of our service
+through `resolve(serviceName)` function.
+
+```js
+var service = container.resolve('IAmAService');
+```
 
 ## Features
-
-#### Dependencies detection
-
-Container expects the service to be declared as function that can be initialized by using `new` keyword. This constructor function can accept one or more arguments that container treats as service dependencies and injects when service has to be resolved.
-
-    function MyService(aDependency) { }
-
-Previous line of code shows a simple constructor function called `MyService` that expects an argument called `aDependency`.
-From the container point of view `MyService` is a service that can be initialized by calling `new MyService()` and passing it an instance of `aDependency` service as dependency.
 
 #### Instance registration
 
 Sometimes your services will depend on primitive values, variables or node modules which do not need to be initialized by the container. For all these scenarios just register them as instance:
 
-    container.register({ instance: new Date(), name: 'CurrentDate' });
+```js
+container.register({ instance: new Date() }, { name: 'CurrentDate' });
+```
 
 Please note that you have to specify the instance name as the container cannot detect it by its own.
 
@@ -58,50 +95,106 @@ Please note that you have to specify the instance name as the container cannot d
 
 By default the container detects the service name by its constructor name but you can provide one or more custom ones and use them as you wish.
 
-    function FormattedDateService() { ... }
+```js
+function FormattedDateService() { ... }
 
-    function MyService(dateService) { ... }
+function MyService(dateService) { ... }
 
-    ...
+// ...
 
-    container.register({ module: FormattedDateService, names: ['FormattedDateService', 'DateService'] });
-    container.register({ module: MyService });
+container.register({ module: FormattedDateService }, { names: ['FormattedDateService', 'DateService'] });
+container.register({ module: MyService });
+```
 
 Providing a custom name can be useful if you want to separate dependency name from its implementation. In our example, `MyService` needs a dateService without regards to its formatted or not formatted implementation.
 
-#### Dependency override
+#### Service override
 
 You can register more than one service with the same name. When you resolve it the container gives you the lates registered one.
 
-    function StandardDateService() { ... }
-    function FormattedDateService() { ... }
+```js
+function StandardDateService() { ... }
+function FormattedDateService() { ... }
 
-    ...
+// ...
 
-    container.register({ module: StandardDateService, name: 'DateService' });
-    container.register({ module: FormattedDateService, name: 'DateService' });
+container.register({ module: StandardDateService }, { name: 'DateService' });
+container.register({ module: FormattedDateService }, { name: 'DateService' });
 
-    ...
+// ...
 
-    container.resolve('DateService'); // <- FormattedDateService
-
+container.resolve('DateService'); // <- FormattedDateService
+```
 
 #### Resolve all
 
 As mentioned before, custom service names may be useful in order to abstract a contract from its implementations. Therefore, what about registering a set of validation services which share the same schema and resolve them all?
 
-    function UserNameValidator() { this.isValid = (user) => { ... } }
-    function UserEmailValidator() { this.isValid = (user) => { ... } }
+```js
+function UserNameValidator() { this.isValid = (user) => { ... } }
+function UserEmailValidator() { this.isValid = (user) => { ... } }
 
-    ...
+// ...
 
-    container.register({ module: UserNameValidator, name: 'UserValidator' });
-    container.register({ module: UserEmailValidator, name: 'UserValidator' });
+container.register({ module: UserNameValidator }, { name: 'UserValidator' });
+container.register({ module: UserEmailValidator }, { name: 'UserValidator' });
 
-    ...
+// ...
 
-    var userValidators = container.resolveAll('UserValidator');
+var userValidators = container.resolveAll('UserValidator');
 
-    var isUserValid = userValidators.each(validator => validator.isValid(user));
+var isUserValid = userValidators.each(validator => validator.isValid(user));
+```
 
 Now we can enrich our user validation by registering a new services named `UserValidator` which have a `isValid(user)` function.
+
+#### Transient services
+
+A service can be registered as transient. This means that every time you ask the container to resolve that service then
+it will provide a fresh new instance.
+
+```js
+function MyTransientService() { }
+
+container.register({ module: MyTransientService }, { transient: true });
+
+var firstTime = container.resolve('MyTransientService');
+var secondTime = container.resolve('MyTransientService');
+
+// firstTime != secondTime
+```
+
+#### Inline dependencies
+
+You can explicitly provide dependencies at resolution time. This allows you to define a service scope.
+Dependencies you explicitly declare will be propagated to all dependencies created as effect of your service resolution.
+
+```js
+function IndexController(user) {
+
+  this.handleRequest = function (request) {
+
+    // Return promise
+
+  };
+
+}
+
+container.register({ module: IndexController }, { transient: true });
+
+express.get('/index', (request, response) => {
+
+  var controller = container.resolve('IndexController', { user: request.user });
+
+  controller.handleRequest(request).then(
+    result => {
+      response.send(result);
+    },
+    error => {
+      response.status(500);
+      response.send(error.message);      
+    }
+  );
+
+});
+```
