@@ -34,17 +34,21 @@ $ npm install deependency
 
 ## Creating a container
 
-**Deependency** is a container of Inversion of Control container.
-My nonsense sentence just means Deependency allows you to create as many container as you need but
-most of the time you just want to have one:
+Surprisingly the first thing we need is a container so let's ask **Deependency**
+to create a brand new one for us.
 
 ```js
 const container = require('deependency').container();
 ```
 
+This container is our personal registry office. We will tell the container what
+are our project services along with other useful information and, when needed,
+we will be able to ask to provide us the service we need by its name.
+
 ## Registering services
 
-First of all you should tell the container what are your services that it has to take care of.
+Our container is useless without knowledge of what services it has to take care of.
+Therefore, first of all we should tell it what are our project services.
 This phase is called **Registration** for which the container exposes `register(registrationRequest, registrationOptions)` function.
 
 Let's assume we have following module in our project:
@@ -58,16 +62,14 @@ module.exports = function IAmAService() {
 };
 ```
 
-Then, in our main file we can create an instance of the container and register our external service:
+Then, in our main file we can register our external service into our container previously created:
 
 ```js
-const container = require('deependency').container();
-
 container.register({ module: require('./iAmAService.js') });
 ```
 
 First argument is our registration request and is used by the container to detect the service name,
-its dependencies and a way to instantiate it. It creates a definition of the service and stores it for future uses.
+its dependencies and a way to initialize it. It creates a definition of the service and stores it for future uses.
 
 ## Resolving a service
 
@@ -84,7 +86,8 @@ var service = container.resolve('IAmAService');
 #### Service definition by convention
 
 As mentioned before the container is able to detect information about service you are registering as long as the service code follows a specific convention.
-It expects an object contructor, a class or module pattern which has any number of dependencies as arguments:
+It expects an object contructor, a class or module pattern which has any number of dependencies as arguments.
+Following are three different service definition the container is able to recognize:
 
 ```js
 module.exports = class ClassDefinition {
@@ -148,7 +151,7 @@ Providing a custom name can be useful if you want to separate dependency name fr
 
 #### Service override
 
-You can register more than one service with the same name. When you resolve it the container gives you the lates registered one.
+You can register more than one service with the same name. When you resolve it the container gives you the latest registered one.
 
 ```js
 function StandardDateService() { ... }
@@ -166,7 +169,7 @@ container.resolve('DateService'); // <- FormattedDateService
 
 #### Resolve all
 
-As mentioned before, custom service names may be useful in order to abstract a contract from its implementations. Therefore, what about registering a set of validation services which share the same schema and resolve them all?
+As mentioned before, custom service names may be useful in order to abstract a contract from its implementations. Therefore, what about registering a set of validation services which share the same interface and resolve them all?
 
 ```js
 function UserNameValidator() { this.isValid = (user) => { ... } }
@@ -184,7 +187,7 @@ var userValidators = container.resolveAll('UserValidator');
 var isUserValid = userValidators.each(validator => validator.isValid(user));
 ```
 
-Now we can enrich our user validation by registering a new services named `UserValidator` which have a `isValid(user)` function.
+Now we can enrich our user validation by registering a new services named `UserValidator` which has an `isValid(user)` function.
 
 #### Transient services
 
@@ -210,9 +213,17 @@ Dependencies you explicitly declare will be propagated to all dependencies creat
 ```js
 function IndexController(user) {
 
-  this.handleRequest = function (request) {
+  this.get = function () {
 
-    // Return promise
+    var message = getWelcomeMessage();
+
+    return Promise.resolve(message)
+
+  };
+
+  var getWelcomeMessage = function () {
+
+    return `Welcome ${user.username} !`;
 
   };
 
@@ -222,9 +233,9 @@ container.register({ module: IndexController }, { transient: true });
 
 express.get('/index', (request, response) => {
 
-  var controller = container.resolve('IndexController', { user: request.user });
+  var index = container.resolve('IndexController', { user: request.user });
 
-  controller.handleRequest(request).then(
+  index.get().then(
     result => {
       response.send(result);
     },

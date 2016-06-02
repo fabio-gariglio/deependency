@@ -1,7 +1,7 @@
 {
   "name": "deependency",
   "version": "1.0.3",
-  "description": "Deependency is modular and extensible Inversion of Control container for NodeJS.",
+  "description": "Deependency is modular and extensible Inversion of Control container to easily introduce dependency injection in your NodeJS modules.",
   "main": "./lib",
   "scripts": {
     "test": "mocha test/**/*.spec.js"
@@ -12,13 +12,16 @@
   },
   "keywords": [
     "ioc",
+    "inversion of control",
     "inversion",
-    "of",
     "control",
     "container",
     "dependency",
     "injection",
-    "di"
+    "dependency injection",
+    "di",
+    "solid",
+    "oop"
   ],
   "author": "Fabio Gariglio",
   "license": "MIT",
