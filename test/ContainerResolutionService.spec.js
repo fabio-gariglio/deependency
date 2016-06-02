@@ -366,4 +366,88 @@ describe('Describing [ContainerResolutionService]', () => {
 
   });
 
+  context('resolving a service which explodes during initialization', () => {
+
+    var AnExplodingService = require('./samples/AnExplodingService');
+
+    var dependencyDefinition = {
+      names: ['AnExplodingService'],
+      dependencies: [],
+      isSingleton: true,
+      factoryMethod: () => new AnExplodingService(),
+    };
+
+    var serviceDefinition = {
+      names: ['MyService'],
+      dependencies: ['AnExplodingService'],
+      isSingleton: true,
+      factoryMethod: sinon.stub(),
+    };
+
+    it('a human should be able to understand what has failed', () => {
+
+      var serviceDefinitionCatalogMock = {
+        getServiceDefinitionsByName: sinon.stub(),
+      };
+
+      serviceDefinitionCatalogMock
+        .getServiceDefinitionsByName
+        .withArgs('AnExplodingService')
+        .returns([dependencyDefinition]);
+
+      serviceDefinitionCatalogMock
+        .getServiceDefinitionsByName
+        .withArgs('MyService')
+        .returns([serviceDefinition]);
+
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+
+      (() => containerResolutionService.resolve('MyService')).should.throw({
+        message: /"AnExplodingService" .* Cannot set property 'value' of undefined/,
+        stack: /AnExplodingService\.js:9/,
+      });
+
+    });
+
+  });
+
+  context('resolving a list of services of which one explodes during initialization', () => {
+
+    var AnExplodingService = require('./samples/AnExplodingService');
+    var ASafeService = function () { };
+
+    var aSafeServiceDefinition = {
+      names: ['Service'],
+      dependencies: [],
+      isSingleton: true,
+      factoryMethod: () => new ASafeService(),
+    };
+
+    var anExplodingServiceDefinition = {
+      names: ['Service'],
+      dependencies: [],
+      isSingleton: true,
+      factoryMethod: () => new AnExplodingService(),
+    };
+
+    it('a human should be able to understand what has failed', () => {
+
+      var serviceDefinitionCatalogMock = {
+        getServiceDefinitionsByName: sinon.stub().returns([
+          aSafeServiceDefinition,
+          anExplodingServiceDefinition,
+        ]),
+      };
+
+      var containerResolutionService = new ContainerResolutionService(serviceDefinitionCatalogMock);
+
+      (() => containerResolutionService.resolveAll('Service')).should.throw({
+        message: /"Service" .* Cannot set property 'value' of undefined/,
+        stack: /AnExplodingService\.js:9/,
+      });
+
+    });
+
+  });
+
 });

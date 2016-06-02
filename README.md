@@ -39,7 +39,7 @@ My nonsense sentence just means Deependency allows you to create as many contain
 most of the time you just want to have one:
 
 ```js
-const container = require('Deependency').container();
+const container = require('deependency').container();
 ```
 
 ## Registering services
@@ -61,7 +61,7 @@ module.exports = function IAmAService() {
 Then, in our main file we can create an instance of the container and register our external service:
 
 ```js
-const container = require('Deependency').container();
+const container = require('deependency').container();
 
 container.register({ module: require('./iAmAService.js') });
 ```
